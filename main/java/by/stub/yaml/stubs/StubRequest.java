@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -179,11 +180,26 @@ public class StubRequest {
       } else if (o instanceof StubRequest) {
          final StubRequest dataStoreRequest = (StubRequest) o;
 
-         return urlsMatch(dataStoreRequest.url, this.url)
-            && arraysIntersect(dataStoreRequest.getMethod(), this.getMethod())
-            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
-            && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
-            && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
+         if (!urlsMatch(dataStoreRequest.url, url)) {
+            return false;
+         }
+         if (!arraysIntersect(dataStoreRequest.getMethod(), getMethod())) {
+            ANSITerminal.dump(String.format("METHOD %s failed match for %s", dataStoreRequest.getMethod(), getMethod()));
+            return false;
+         }
+         if (!postBodiesMatch(dataStoreRequest.getPostBody(), getPostBody())) {
+            ANSITerminal.dump(String.format("POST BODY %s failed match for %s", dataStoreRequest.getPostBody(), getPostBody()));
+            return false;
+         }
+         if (!headersMatch(dataStoreRequest.getHeaders(), getHeaders())) {
+            ANSITerminal.dump(String.format("HEADERS %s failed match for %s", dataStoreRequest.getHeaders(), getHeaders()));
+            return false;
+         }
+         if (!queriesMatch(dataStoreRequest.getQuery(), getQuery())) {
+            ANSITerminal.dump(String.format("QUERY %s failed match for %s", dataStoreRequest.getQuery(), getQuery()));
+            return false;
+         }
+         return true;
       }
 
       return false;

@@ -43,7 +43,8 @@ import java.util.Map;
 public final class YamlParser {
 
    public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
-   private String dataConfigHomeDirectory;
+   public static final String OAUTH_HEADER_PREFIX = "OAuth";
+   public static final String OAUTH_BEARER_TOKEN_HEADER_PREFIX = "Bearer";
    private final static Yaml SNAKE_YAML;
 
    static {
@@ -66,6 +67,7 @@ public final class YamlParser {
    private static final String YAML_NODE_REQUEST = "request";
    private static final String YAML_NODE_METHOD = "method";
    private static final String YAML_NODE_FILE = "file";
+   private String dataConfigHomeDirectory;
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
 
@@ -88,7 +90,6 @@ public final class YamlParser {
 
       return httpLifecycles;
    }
-
 
    private StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
 
@@ -126,7 +127,6 @@ public final class YamlParser {
          stubHttpLifecycle.setResponse(targetStub);
       }
    }
-
 
    private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
@@ -167,7 +167,7 @@ public final class YamlParser {
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
-   private  <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
+   private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
       final B stubBuilder = stubBuilderClass.newInstance();
       final List<T> targetStubList = new LinkedList<T>();
@@ -221,9 +221,19 @@ public final class YamlParser {
       }
       final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
       final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
-      pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
+
+      if (isOAuthHeader(authorizationHeader)) {
+         pairValue.put(StubRequest.AUTH_HEADER, authorizationHeader);
+      } else {
+         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
+         pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
+      }
 
       return pairValue;
+   }
+
+   private boolean isOAuthHeader(final String authorizationHeader) {
+      return authorizationHeader.startsWith(OAUTH_HEADER_PREFIX) ||
+         authorizationHeader.startsWith(OAUTH_BEARER_TOKEN_HEADER_PREFIX);
    }
 }

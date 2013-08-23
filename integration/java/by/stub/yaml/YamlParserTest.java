@@ -456,6 +456,50 @@ public class YamlParserTest {
    }
 
    @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithOAuthAuthorizationHeader() throws Exception {
+
+      final String authorization = "OAuth ABC123";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorization(authorization)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final MapEntry headerOneEntry = MapEntry.entry("authorization", authorization);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithOAuthBearerTokenAuthorizationHeader() throws Exception {
+
+      final String authorization = "Bearer ABC123";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorization(authorization)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final MapEntry headerOneEntry = MapEntry.entry("authorization", authorization);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeader() throws Exception {
 
       final String authorization = "";

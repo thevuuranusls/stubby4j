@@ -39,6 +39,9 @@ public final class StubsResponseHandlingStrategyFactory {
          case REDIRECT:
             return new RedirectResponseHandlingStrategy(foundStubResponse);
 
+         case PARTIAL_CONTENT_206:
+            return new PartialContentResponseHandlingStrategy(foundStubResponse);
+
          default:
             return new DefaultResponseHandlingStrategy(foundStubResponse);
 

@@ -75,6 +75,10 @@ public class StubHttpLifecycle {
       return StringUtils.isSet(getAuthorizationHeader());
    }
 
+   public boolean isRangeRequest() {
+        return request != null && request.getHeaders().containsKey(StubRequest.RANGE_HEADER);
+   }
+
    public boolean hasNotAuthorized(final StubHttpLifecycle assertingLifecycle) {
       final String stubbedAuthorization = getAuthorizationHeader();
       final String assertingAuthorization = assertingLifecycle.getAuthorizationHeader();

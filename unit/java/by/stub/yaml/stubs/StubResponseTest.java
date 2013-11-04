@@ -68,4 +68,10 @@ public class StubResponseTest {
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
       assertThat(expectedResponseBody).isEqualTo(actualResponseBody);
    }
+
+    @Test
+    public void shouldReturnIsPartialContentWhenStatusSetTo206() throws Exception {
+        final StubResponse stubResponse = new StubResponse("206", "", null, null, null);
+        assertThat(stubResponse.isPartial()).isTrue();
+    }
 }

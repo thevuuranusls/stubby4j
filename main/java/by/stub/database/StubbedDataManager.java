@@ -21,6 +21,7 @@ package by.stub.database;
 
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.stubs.NotFoundStubResponse;
+import by.stub.yaml.stubs.PartialContentStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -72,6 +73,10 @@ public class StubbedDataManager {
 
       if (stubResponse.hasHeaderLocation()) {
          return RedirectStubResponse.newRedirectStubResponse(stubResponse);
+      }
+
+      if (assertingLifecycle.isRangeRequest() && stubResponse.isPartial()) {
+         return new PartialContentStubResponse(stubResponse);
       }
 
       return stubResponse;

@@ -27,5 +27,6 @@ public enum StubResponseTypes {
    NOTFOUND,
    UNAUTHORIZED,
    REDIRECT,
-   OK_200
+   OK_200,
+   PARTIAL_CONTENT_206
 }

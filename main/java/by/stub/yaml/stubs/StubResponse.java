@@ -100,6 +100,10 @@ public class StubResponse {
       return getHeaders().containsKey("location");
    }
 
+   public boolean isPartial() {
+       return getStatus().startsWith("206");
+   }
+
    void addResourceIDHeader(final int httplifeCycleIndex) {
       getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
    }

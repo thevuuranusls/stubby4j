@@ -39,6 +39,7 @@ import java.util.regex.PatternSyntaxException;
 public class StubRequest {
 
    public static final String AUTH_HEADER = "authorization";
+   public static final String RANGE_HEADER = "range";
 
    private final String url;
    private final String post;
@@ -110,7 +111,7 @@ public class StubRequest {
       return post;
    }
 
-   public final Map<String, String> getHeaders() {
+   public Map<String, String> getHeaders() {
       final Map<String, String> headersCopy = new HashMap<String, String>(headers);
       final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
       this.headers.clear();
